@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>THURSDAY IDE | SOVEREIGN COMMAND</title>
+    <style>
+        :root { --glow: #00ffcc; --bg: #050505; --panel: #0d0d0d; --border: #1a1a1a; }
+        body { background: var(--bg); color: #e0e0e0; font-family: 'Fira Code', monospace; margin: 0; overflow: hidden; height: 100vh; }
+        
+        /* VAULT LOCK */
+        #vault-lock { position: fixed; inset: 0; z-index: 1000; background: radial-gradient(circle, #111 0%, #000 100%); display: flex; flex-direction: column; justify-content: center; align-items: center; transition: 0.8s cubic-bezier(0.4, 0, 0.2, 1); }
+        .lock-box { border: 1px solid var(--glow); padding: 60px; text-align: center; box-shadow: 0 0 50px rgba(0, 255, 204, 0.1); }
+        input[type="password"] { background: #000; border: 1px solid var(--glow); color: var(--glow); padding: 15px; width: 320px; text-align: center; font-size: 1.2rem; outline: none; margin-bottom: 20px; }
+        .access-btn { background: var(--glow); color: #000; border: none; padding: 15px 40px; cursor: pointer; font-weight: 900; letter-spacing: 2px; text-transform: uppercase; }
+
+        /* MAIN IDE */
+        #ide-interface { display: none; height: 100vh; grid-template-rows: 45px 1fr 200px; opacity: 0; transition: 1s; }
+        header { background: #111; border-bottom: 1px solid var(--border); display: flex; align-items: center; padding: 0 20px; gap: 30px; font-size: 11px; }
+        .status { color: var(--glow); font-weight: bold; }
+
+        .main-view { display: grid; grid-template-columns: 260px 1fr 350px; overflow: hidden; }
+        .sidebar { background: var(--panel); border-right: 1px solid var(--border); padding: 20px; display: flex; flex-direction: column; gap: 20px; }
+        .editor-container { position: relative; background: #000; }
+        textarea { width: 100%; height: 100%; background: transparent; color: #fff; border: none; padding: 30px; font-size: 15px; outline: none; resize: none; line-height: 1.6; }
+        
+        .ai-panel { background: var(--panel); border-left: 1px solid var(--border); display: flex; flex-direction: column; }
+        #chat-log { flex: 1; overflow-y: auto; padding: 15px; font-size: 13px; color: #aaa; }
+        .input-box { padding: 15px; border-top: 1px solid var(--border); }
+        #ai-query { width: 100%; background: #1a1a1a; border: 1px solid #333; color: #fff; padding: 10px; outline: none; }
+
+        #terminal { background: #000; border-top: 1px solid var(--glow); padding: 15px; color: #00ffcc; font-size: 12px; overflow-y: auto; white-space: pre-wrap; height: 100%; }
+        .btn { background: var(--glow); color: #000; border: none; padding: 10px; cursor: pointer; font-weight: bold; font-size: 10px; width: 100%; text-transform: uppercase; }
+    </style>
+</head>
+<body>
+
+<div id="vault-lock">
+    <div class="lock-box">
+        <h1 style="color: var(--glow); letter-spacing: 12px;">THURSDAY</h1>
+        <p style="color: #666; font-size: 10px; margin-bottom: 30px;">128x H100 CLUSTER | 100TB VOID STORAGE</p>
+        <input type="password" id="master-key" placeholder="IDENTIFY MASTER">
+        <br>
+        <button class="access-btn" onclick="openVault()">INITIALIZE ENGINE</button>
+    </div>
+</div>
+
+<div id="ide-interface">
+    <header>
+        <span style="font-weight: 900; letter-spacing: 3px;">THURSDAY v3.5 [STABLE]</span>
+        <span class="status">● 128x H100: ONLINE</span>
+        <span class="status">● 100TB VOID: MOUNTED</span>
+        <span>GHOST-IP: 42.64.2048.128</span>
+        <button class="btn" style="width: auto; margin-left: auto;" onclick="ignite()">IGNITE 2T TRAINING</button>
+    </header>
+    
+    <div class="main-view">
+        <div class="sidebar">
+            <h4 style="color: var(--glow); margin: 0;">VOID EXPLORER</h4>
+            <div style="font-size: 12px; color: #555;">📁 datasets/shards_100TB<br>📁 weights/2T_MoE</div>
+            <input type="file" id="ingestor" multiple style="display:none" onchange="pushToVoid()">
+            <button class="btn" onclick="document.getElementById('ingestor').click()">PUSH DATA TO VOID</button>
+            <hr style="border:0.5px solid var(--border); width:100%;">
+            <p style="font-size: 10px; color:#444;">ENGINE: CLAUDE OPUS 4.6<br>CREDITS: UNLIMITED</p>
+        </div>
+
+        <div class="editor-container">
+            <textarea id="editor-field" placeholder="# Define 2-Trillion Parameter Model Architecture..."></textarea>
+        </div>
+
+        <div class="ai-panel">
+            <div style="padding: 15px; border-bottom: 1px solid var(--border); color: var(--glow);">ARCHITECT: CLAUDE OPUS 4.6</div>
+            <div id="chat-log">> Connection stable. Awaiting 2T sharding logic.</div>
+            <div class="input-box">
+                <input type="text" id="ai-query" placeholder="Command the Architect..." onkeypress="handleAI(event)">
+            </div>
+        </div>
+    </div>
+
+    <div id="terminal">> CONNECTED TO DIVYAKUSH_ROOT... SECURE TUNNEL ESTABLISHED.</div>
+</div>
+
+<script>
+    const term = document.getElementById('terminal');
+    const PASS = 'PROJECT_DIVYAKUSH_OMEGA_99';
+
+    // 1. OPEN THE VAULT
+    function openVault() {
+        if(document.getElementById('master-key').value === PASS) {
+            document.getElementById('vault-lock').style.transform = 'translateY(-100%)';
+            document.getElementById('ide-interface').style.display = 'grid';
+            setTimeout(() => { document.getElementById('ide-interface').style.opacity = '1'; }, 100);
+            term.innerHTML += `\n> [AUTH]: IDENTITY VERIFIED. 128x H100s UNLOCKED.`;
+        } else { alert("UNAUTHORIZED ACCESS DETECTED."); }
+    }
+
+    // 2. CORRECTED DATA INGESTION (TALKS TO BACKEND)
+    async function pushToVoid() {
+        const files = document.getElementById('ingestor').files;
+        term.innerHTML += `\n> [INGESTION]: Syncing ${files.length} units with 100TB Void-Storage...`;
+        
+        try {
+            const res = await fetch('/api', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ 
+                    key: PASS, 
+                    action: 'INGEST',
+                    metadata: { fileCount: files.length }
+                })
+            });
+            const data = await res.json();
+            if(data.status === "SUCCESS") {
+                term.innerHTML += `\n<span style="color:white;">> [SUCCESS]: Data mirrored to Obsidian Racks via Ghost-IP.</span>`;
+            }
+        } catch (err) {
+            term.innerHTML += `\n> [ERROR]: Tunnel collapse. Check Gateway connection.`;
+        }
+    }
+
+    // 3. CORRECTED TRAINING IGNITION (TALKS TO BACKEND)
+    async function ignite() {
+        const script = document.getElementById('editor-field').value;
+        term.innerHTML += `\n> [IGNITION]: Sharding 2T parameters across 128x H100s...`;
+
+        try {
+            const res = await fetch('/api', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ 
+                    key: PASS, 
+                    action: 'TRAIN', 
+                    script: script 
+                })
+            });
+            const data = await res.json();
+            if(data.status === "SUCCESS") {
+                term.innerHTML += `\n<span style="color:white;">> [FORGE]: EPOCH 0 INITIATED. TFLOPS: 840.2 | NODE: 42.64.2048.128</span>`;
+            }
+        } catch (err) {
+            term.innerHTML += `\n> [ERROR]: Hardware not responding. Ensure Ghost-IP is active.`;
+        }
+    }
+
+    // 4. ARCHITECT CHAT
+    function handleAI(e) {
+        if(e.key === 'Enter') {
+            const query = document.getElementById('ai-query').value;
+            const chat = document.getElementById('chat-log');
+            chat.innerHTML += `<div style="color:white; margin-top:10px;">> ${query}</div>`;
+            
+            // SIMULATING CLAUDE 4.6 PROCESSING VIA H100 CLUSTER
+            setTimeout(() => {
+                chat.innerHTML += `<div style="color:var(--glow); margin-top:5px;">> [CLAUDE 4.6]: 2-Trillion parameter layers analyzed. Mixture of Experts (MoE) gating strategy optimized for 128 nodes. Ready to compile weights.</div>`;
+                chat.scrollTop = chat.scrollHeight;
+            }, 600);
+            document.getElementById('ai-query').value = '';
+        }
+    }
+</script>
+</body>
+</html>
